@@ -1,25 +1,86 @@
 stages:
+
   - build
+
+  # - test
+
   - deploy
- 
-build_app:
+
+# Build Stage
+
+build-job:
+
   stage: build
-  image: node:18
+
+  image: node:24.4.1
+
   script:
-    - npm ci
+
+    - npm install
+
     - npm run build
+
+    - mv dist public  # GitLab Pages expects a 'public/' folder
+
   artifacts:
+
     paths:
-      - dist/
+
+      - public/
+
     expire_in: 1 hour
-  allow_failure: true
- 
-deploy_app:
+
+# Test Stage
+
+# test-job:
+
+#   stage: test
+
+#   image: node:24.4.1
+
+#   script:
+
+#     - npm install
+
+#     - npm run test
+
+#   artifacts:
+
+#     paths:
+
+#       - coverage/
+
+#       - test-results/
+
+#     when: always
+
+#     expire_in: 1 hour
+
+#   allow_failure: false
+
+#   only:
+
+#     - main
+
+# Deploy Stage (GitLab Pages)
+
+deploy-job:
+
   stage: deploy
-  image: node:18
+
+  image: node:24.4.1
+
   script:
-    - echo "Deploy job always passes!"
+
+    - echo "Deploying to production..."
+
+  environment:
+
+    name: production
+
+    url: https://your-production-url.com
+
   only:
-    - master
-  allow_failure: false
+
+    - main
  
